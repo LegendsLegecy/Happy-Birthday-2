@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Surprise!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Align to bottom of screen */
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background 1s ease;
+        }
+        body.colorful {
+            background: linear-gradient(to right, #ff6f91, #ffcc33, #66ccff);
+        }
+        .container {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            height: 100svh; /* Better mobile viewport */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .candle-scene {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
+            padding-bottom: env(safe-area-inset-bottom); /* iOS safe area */
+        }
+        .candle {
+            font-size: clamp(24vw, 35vw, 48vw);
+            position: relative;
+            z-index: 2;
+            color: #333;
+            animation: flicker 0.3s infinite alternate;
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 20%, rgba(0, 0, 0, 0.2) 40%, transparent 60%);
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 20%, rgba(0, 0, 0, 0.2) 40%, transparent 60%);
+        }
+        .light-effect {
+            position: absolute;
+            top: calc(-1 * clamp(22vw, 30vw, 38vw));
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(36vw, 42vw, 66vw);
+            height: clamp(60vw, 70vw, 110vw);
+            max-width: 420px;
+            max-height: 700px;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 200, 0.9) 0%, rgba(255, 147, 41, 0.6) 20%, rgba(255, 69, 0, 0.3) 40%, rgba(0, 102, 204, 0.1) 50%, transparent 70%);
+            z-index: 1;
+            animation: flameGlow 0.8s ease-in-out infinite;
+            border-radius: 50% 50% 20% 20%;
+            filter: blur(8px);
+        }
+        .light-effect.spread {
+            animation: spreadLight 1s ease-out forwards;
+        }
+        .fan-btn {
+            position: absolute;
+            top: calc(-1 * clamp(6vw, 8vw, 10vw));
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 2vw 4vw;
+            background: transparent;
+            color: #e0e0e0;
+            border: 1px solid rgba(224, 224, 224, 0.5);
+            border-radius: 5px;
+            font-size: clamp(1.3em, 1.6em, 1.8em);
+            cursor: pointer;
+            transition: border-color 0.3s, transform 0.2s;
+            z-index: 3;
+        }
+        .fan-btn:hover {
+            border-color: #90a4ae;
+            transform: translateX(-50%) scale(1.1);
+        }
+        .birthday-note {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            text-align: center;
+            z-index: 4;
+            width: 90vw;
+            max-width: 700px;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 3vw;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            animation: noteFadeIn 1s ease-in forwards;
+        }
+        .birthday-note h1 {
+            font-size: 2.5em;
+            margin-bottom: 2vw;
+            color: #ffcc33;
+        }
+        .birthday-note p {
+            font-size: 1.5em;
+            line-height: 1.6;
+            margin: 1vw 0;
+        }
+        .highlight {
+            color: #ff6f91;
+            font-weight: bold;
+        }
+        .close-btn {
+            position: absolute;
+            top: 1vw;
+            right: 1vw;
+            background: transparent;
+            color: #fff;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .close-btn:hover {
+            color: #ff6f91;
+        }
+        @media (max-width: 600px) {
+            .candle {
+                font-size: 44vw; /* Larger for mobile */
+            }
+            .light-effect {
+                top: -36vw;
+                width: 62vw;
+                height: 104vw;
+            }
+            .fan-btn {
+                top: -9.5vw;
+                padding: 4.5vw 9vw;
+                font-size: 1.35em;
+            }
+            .birthday-note {
+                width: 95vw;
+                padding: 5vw;
+            }
+            .birthday-note h1 {
+                font-size: 1.8em;
+            }
+            .birthday-note p {
+                font-size: 1.2em;
+            }
+        }
+        /* Tablet (600px–1023px) */
+        @media (min-width: 600px) and (max-width: 1023px) {
+            .candle { font-size: 32vw; }
+            .light-effect { top: -30vw; width: 50vw; height: 84vw; }
+            .fan-btn { top: -8vw; font-size: 1.5em; }
+            .birthday-note { max-width: 680px; }
+        }
+        /* Desktop tweaks (standard PC ~1280px and up) */
+        @media (min-width: 1024px) {
+            .candle { font-size: 28vw; }
+            .light-effect { top: -24vw; width: 36vw; height: 60vw; }
+            .fan-btn { top: -6vw; font-size: 1.6em; }
+            .birthday-note { max-width: 640px; }
+        }
+        /* Huawei small phones (<= 420px logical width) */
+        @media (max-width: 420px) {
+            .candle { font-size: 48vw; }
+            .light-effect { top: -37vw; width: 66vw; height: 110vw; }
+            .fan-btn { top: -10vw; font-size: 1.3em; padding: 4.5vw 9vw; }
+            .birthday-note h1 { font-size: 1.6em; }
+            .birthday-note p { font-size: 1.1em; }
+        }
+        @keyframes noteFadeIn {
+            0% { opacity: 0; transform: translate(-50%, -60%); }
+            100% { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        .balloon {
+            position: absolute;
+            font-size: 3em;
+            opacity: 0;
+            animation: floatUp 4s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 0.8; transform: translateY(100vh); }
+            100% { opacity: 0; transform: translateY(-100vh); }
+        }
+        @keyframes flicker {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        @keyframes flameGlow {
+            0% { transform: scaleY(0.9) scaleX(0.95) translateX(-50%) translateY(5px); opacity: 0.7; }
+            50% { transform: scaleY(1.1) scaleX(1.05) translateX(-50%) translateY(-5px); opacity: 1; }
+            100% { transform: scaleY(0.9) scaleX(0.95) translateX(-50%) translateY(5px); opacity: 0.7; }
+        }
+        @keyframes spreadLight {
+            0% {
+                transform: translateX(-50%) scale(1);
+                opacity: 0.9;
+                width: 42vw;
+                height: 70vw;
+            }
+            100% {
+                transform: translateX(-50%) scale(5);
+                opacity: 0;
+                width: 84vw;
+                height: 140vw;
+                background: radial-gradient(ellipse at center, rgba(255, 255, 200, 0.5) 0%, rgba(255, 147, 41, 0.3) 20%, rgba(255, 69, 0, 0.1) 40%, transparent 70%);
+            }
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #90a4ae;
+            animation: confettiFall 5s linear infinite;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="candle-scene" id="candleScene">
+            <div class="candle">🕯️</div>
+            <div class="light-effect" id="lightEffect"></div>
+            <button class="fan-btn" onclick="blowCandle()">Blow</button>
+        </div>
+        <div class="birthday-note" id="birthdayMessage">
+            <button class="close-btn" onclick="closeNote()">✕</button>
+            <h1>Happy Birthday, Sadaf Api!</h1>
+            <p>Dearest <span class="highlight">Sadaf Api</span>,</p>
+            <p>Your smile is my sunshine, your kindness my treasure.</p>
+            <p><span class="highlight">Kaka Bhola</span> wishes you endless joy!</p>
+        </div>
+    </div>
+    <audio id="cheerSound" preload="auto" playsinline src="{{ url_for('static', filename='audio/cheer.mp3') }}"></audio>
+    <audio id="birthdaySong" preload="auto" playsinline src="{{ url_for('static', filename='audio/birthday_song.mp3') }}"></audio>
+    <script>
+        function blowCandle() {
+            const candleScene = document.getElementById('candleScene');
+            const message = document.getElementById('birthdayMessage');
+            const lightEffect = document.getElementById('lightEffect');
+            const body = document.body;
+            
+            // Play cheering sound
+            const cheerSound = document.getElementById('cheerSound');
+            cheerSound.volume = 1.0; // Full volume
+            cheerSound.play().catch(error => {
+                console.log("Cheer sound failed:", error);
+                alert("Cheering sound failed to play. Please ensure your device is not muted and browser audio is enabled (check the address bar for a sound icon). Try another browser if the issue persists.");
+            });
+            
+            // Trigger the light-spreading animation and colorful background
+            lightEffect.classList.add('spread');
+            body.classList.add('colorful');
+            
+            // Wait for the light animation to complete before showing the message
+            setTimeout(() => {
+                candleScene.style.display = 'none';
+                message.style.display = 'block';
+                createConfetti();
+                createBalloons();
+                playBirthdaySong();
+            }, 1000); // Match the duration of spreadLight animation
+        }
+
+        function closeNote() {
+            const message = document.getElementById('birthdayMessage');
+            message.style.display = 'none';
+        }
+
+        function createConfetti() {
+            const confettiContainer = document.body;
+            const colors = ['#ff6f91', '#ffcc33', '#66ccff', '#ff4d73', '#33cc99'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confettiContainer.appendChild(confetti);
+            }
+        }
+
+        function createBalloons() {
+            const balloonContainer = document.body;
+            const balloonEmojis = ['🎈', '🎈', '🎈'];
+            const colors = ['#ff6f91', '#ffcc33', '#66ccff'];
+            for (let i = 0; i < 10; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.innerHTML = balloonEmojis[Math.floor(Math.random() * balloonEmojis.length)];
+                balloon.style.left = Math.random() * 100 + 'vw';
+                balloon.style.animationDelay = Math.random() * 2 + 's';
+                balloon.style.color = colors[Math.floor(Math.random() * colors.length)];
+                balloonContainer.appendChild(balloon);
+            }
+        }
+
+        function playBirthdaySong() {
+            const audio = document.getElementById('birthdaySong');
+            audio.volume = 0.8; // Slightly lower to balance
+            audio.play().catch(error => {
+                console.log("Birthday song playback failed:", error);
+                alert("Birthday song failed to play. Please ensure your device is not muted and browser audio is enabled.");
+            });
+        }
+    </script>
+</body>
+</html>
