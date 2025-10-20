@@ -1,23 +1,12 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "wsgi.py",
-      "use": "@vercel/python"
-    }
-  ],
   "functions": {
     "api/**/*.py": {
-      "runtime": "python3.11"
-    },
-    "wsgi.py": {
       "runtime": "python3.11"
     }
   },
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "wsgi.py"
-    }
+    { "src": "/api/wsgi", "dest": "/api/wsgi.py" },
+    { "src": "/(.*)", "dest": "/api/wsgi.py" }
   ]
 }
