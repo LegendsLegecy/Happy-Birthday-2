@@ -9,7 +9,3 @@ def birthday_surprise():
 @app.route('/birthday')
 def birthday_surprise_page():
     return render_template('birthday_surprise.html')
-
-# For Vercel deployment
-def handler(request):
-    return app(request)
